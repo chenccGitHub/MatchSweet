@@ -13,8 +13,7 @@ public class UIGameOverPanel : View
         resetGameBtn = transform.Find("ResetGameBtn").GetComponent<Button>();
         resetGameBtn.onClick.AddListener(() =>
         {
-            GameManager.Instance.isGameOver = false;
-            gameObject.SetActive(false);
+            GameManager.Instance.ResetGame();
         });
     }
     public void ResultScore(int value)

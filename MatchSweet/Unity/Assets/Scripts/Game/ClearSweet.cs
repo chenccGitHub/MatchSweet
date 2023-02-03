@@ -33,7 +33,7 @@ public class ClearSweet : MonoBehaviour
             animator.Play(clearAnimation.name);
             //得分+1，播放清除声音
             AudioSource.PlayClipAtPoint(clearSweetClip, transform.position);
-            UIManager.GetView<UIGamePanel>().AddScore(50);
+            GameManager.Instance.AddScore(50);
             yield return new WaitForSeconds(clearAnimation.length);
             Destroy(gameObject);
             isClearing=false;

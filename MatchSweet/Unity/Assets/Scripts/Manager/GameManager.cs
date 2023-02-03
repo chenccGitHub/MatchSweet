@@ -34,6 +34,43 @@ public class GameManager : Singleton<GameManager>
     public GameObject girdPrefab; //网格预制体
 
     public bool isGameOver; //游戏结束
+    private float gameTime = 60; //游戏时间
+    private float scoreTime ; //加分数的时间
+    private int score = 0;
+    private int currentScore = 0;//当前分数
+
+
+    private void Update()
+    {
+        gameTime -= Time.deltaTime;
+        if (gameTime <= 0)
+        {
+            gameTime = 0;
+            //游戏结束
+            GameOver();
+            return;
+        }
+        if (scoreTime <= 0.05f)
+        {
+            scoreTime += Time.deltaTime;
+        }
+        else
+        {
+            if (currentScore < score)
+            {
+                currentScore += 50;
+                UIManager.GetView<UIGamePanel>().SetScoreText(currentScore);
+                scoreTime = 0;
+            }
+        }
+        UIManager.GetView<UIGamePanel>().SetTimeText(gameTime);
+    }
+
+    public void AddScore(int value)
+    {
+        score += value;
+        UIManager.GetView<UIGamePanel>().SetScoreText(score);
+    }
     #region
     [Header("甜品元素相关类型")]
     public Dictionary<SweetsType, GameObject> sweetPrefabDic; //甜品预制体字典（包含类型以及实例化物体）
@@ -267,26 +304,36 @@ public class GameManager : Singleton<GameManager>
         {
             return;
         }
-        //检测匹配元素是否为空
-        if (MatchSweets(sweet1, sweet2.X, sweet2.Y) == null && MatchSweets(sweet2, sweet1.X, sweet1.Y) == null)
-        {
-            return;
-        }
         //位置调换
         sweets[sweet1.X, sweet1.Y] = sweet2;
         sweets[sweet2.X, sweet2.Y] = sweet1;
-        int tempX = sweet1.X;
-        int tempY = sweet1.Y;
-        sweet1.MovedComponent.Move(sweet2.X, sweet2.Y, fillTime);
-        sweet2.MovedComponent.Move(tempX, tempY, fillTime);
-        ClearAllMatchedSweet();
-        StartCoroutine(IAllFill());
+        //检测匹配元素是否为空
+        if (MatchSweets(sweet1, sweet2.X, sweet2.Y) != null || MatchSweets(sweet2, sweet1.X, sweet1.Y) != null)
+        {
+            int tempX = sweet1.X;
+            int tempY = sweet1.Y;
+            sweet1.MovedComponent.Move(sweet2.X, sweet2.Y, fillTime);
+            sweet2.MovedComponent.Move(tempX, tempY, fillTime);
+            ClearAllMatchedSweet();
+            StartCoroutine(IAllFill());
+        }
+        else
+        {
+            sweets[sweet1.X, sweet1.Y] = sweet1;
+            sweets[sweet2.X, sweet2.Y] = sweet2;
+        }
+       
+        
     }
     /// <summary>
     /// 鼠标按下甜品
     /// </summary>
     public void PressedSweet(GameSweet sweet)
     {
+        if (isGameOver)
+        {
+            return;
+        }
         pressedSweet = sweet;
     }
     /// <summary>
@@ -294,10 +341,6 @@ public class GameManager : Singleton<GameManager>
     /// </summary>
     public void EnteredSweet(GameSweet sweet)
     {
-        if (isGameOver)
-        {
-            return;
-        }
         enteredSweet = sweet;
     }
     /// <summary>
@@ -316,7 +359,7 @@ public class GameManager : Singleton<GameManager>
     /// <returns></returns>
     public List<GameSweet> MatchSweets(GameSweet sweet, int newX, int newY)
     {
-        List<GameSweet> tempList = new List<GameSweet>();
+        List<GameSweet> tempList;
         //有颜色的才可以匹配
         if (!sweet.CanColor())
         {
@@ -603,7 +646,10 @@ public class GameManager : Singleton<GameManager>
                 //满足条件的加入行列表匹配
                 if (sweets[x, y].CanColor() && sweets[x, y].ColoredComponent.Color == color)
                 {
-                    matchSweets.Add(sweets[x, y]);
+                    if (!matchSweets.Contains(sweets[x, y]))
+                    {
+                        matchSweets.Add(sweets[x, y]);
+                    } 
                 }
                 else
                 {
@@ -621,7 +667,10 @@ public class GameManager : Singleton<GameManager>
         {
             for (int i = 0; i < matchSweet1.Count; i++)
             {
-                matchFinishedSweets.Add(matchSweet1[i]);
+                if (!matchFinishedSweets.Contains(matchSweet1[i]))
+                {
+                    matchFinishedSweets.Add(matchSweet1[i]);
+                }
                 int x = matchSweet1[i].X;
                 int y = 100;     //100表示不用传进来的参数
                 if (matchType != MatchType.COLUMN_ROW) 
@@ -638,15 +687,37 @@ public class GameManager : Singleton<GameManager>
                 {
                     for (int j = 0; j < matchSweet2.Count; j++)
                     {
-                        matchFinishedSweets.Add(matchSweet2[j]);
+                        if (!matchFinishedSweets.Contains(matchSweet2[j]))
+                        {
+                            matchFinishedSweets.Add(matchSweet2[j]);
+                        }
                     }
                 }
             }
         }
+
         if (matchFinishedSweets.Count >= 3)
         {
             return matchFinishedSweets;
         }
         return null;
+    }
+    /// <summary>
+    /// c重新开始游戏
+    /// </summary>
+    public void ResetGame()
+    {
+        gameTime = 60;
+        isGameOver = false;
+        UIManager.GetView<UIGamePanel>().SetTimeAnimation(true);
+        UIManager.Close<UIGameOverPanel>();
+
+    }
+    public void GameOver()
+    {
+        GameManager.Instance.isGameOver = true;
+        UIManager.Show<UIGameOverPanel>();
+        UIManager.GetView<UIGameOverPanel>().ResultScore(score);
+        UIManager.GetView<UIGamePanel>().SetTimeAnimation(false);
     }
 }

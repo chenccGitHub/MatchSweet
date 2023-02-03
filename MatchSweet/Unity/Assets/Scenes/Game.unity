@@ -305,7 +305,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc2e7428c0d1b2549a029a6d84189896, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  xColumn: 10
+  xColumn: 9
   yRow: 9
   fillTime: 0.1
   girdPrefab: {fileID: 8763929225313922953, guid: a360f6f88f2514d49b5e057857e32a14, type: 3}
@@ -346,7 +346,7 @@ AudioSource:
   m_PlayOnAwake: 1
   m_Volume: 0.182
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
