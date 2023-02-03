@@ -4,15 +4,16 @@ using UnityEngine;
 
 public class ClearSweet : MonoBehaviour
 {
-    public AnimationClip clearAnimation; //Çå³ı¶¯»­
+    public AnimationClip clearAnimation; //æ¸…é™¤åŠ¨ç”»
 
     protected GameSweet sweet;
 
     private bool isClearing;
+    public AudioClip clearSweetClip;
 
     public bool IsClearing { get => isClearing;}
     /// <summary>
-    /// Ïû³ıÌğÆ·
+    /// æ¶ˆé™¤ç”œå“
     /// </summary>
     public virtual void Clear()
     {
@@ -21,7 +22,7 @@ public class ClearSweet : MonoBehaviour
 
     }
     /// <summary>
-    /// ²¥·ÅÇå³ı¶¯»­¡¢ÉùÒô¡¢ÒÔ¼°ÒÆ³ı·½¿é
+    /// æ’­æ”¾æ¸…é™¤åŠ¨ç”»ã€å£°éŸ³ã€ä»¥åŠç§»é™¤æ–¹å—
     /// </summary>
     /// <returns></returns>
     public IEnumerator IClearCoroutine()
@@ -30,7 +31,9 @@ public class ClearSweet : MonoBehaviour
         if (animator != null)
         {
             animator.Play(clearAnimation.name);
-            //µÈ·Ö+1£¬²¥·ÅÇå³ıÉùÒô
+            //å¾—åˆ†+1ï¼Œæ’­æ”¾æ¸…é™¤å£°éŸ³
+            AudioSource.PlayClipAtPoint(clearSweetClip, transform.position);
+            UIManager.GetView<UIGamePanel>().AddScore(50);
             yield return new WaitForSeconds(clearAnimation.length);
             Destroy(gameObject);
             isClearing=false;

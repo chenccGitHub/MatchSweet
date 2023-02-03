@@ -220,3 +220,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   clearAnimation: {fileID: 7400000, guid: 6ca88c68251bd81489b8bd9625fb0b4e, type: 2}
+  clearSweetClip: {fileID: 8300000, guid: 9cb19eb032d304b07acec596ae2ce4a4, type: 3}

@@ -16,3 +16,4 @@ MatchSweet/Unity/.vsconfig
 MatchSweet/Unity/Assembly-CSharp.csproj
 MatchSweet/Unity/ignore.conf
 MatchSweet/Unity/Unity.sln
+MatchSweet/Unity/Temp/

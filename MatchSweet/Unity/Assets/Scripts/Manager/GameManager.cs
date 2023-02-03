@@ -32,6 +32,8 @@ public class GameManager : Singleton<GameManager>
     private float fillTime = 0.1f; //填充时间
     [Header("网格相关")]
     public GameObject girdPrefab; //网格预制体
+
+    public bool isGameOver; //游戏结束
     #region
     [Header("甜品元素相关类型")]
     public Dictionary<SweetsType, GameObject> sweetPrefabDic; //甜品预制体字典（包含类型以及实例化物体）
@@ -51,6 +53,7 @@ public class GameManager : Singleton<GameManager>
         Init();
         TestCreatBarrier();
         StartCoroutine(IAllFill());
+        UIManager.Show<UIGamePanel>();
     }
     /// <summary>
     /// 测试生成障碍饼干
@@ -291,6 +294,10 @@ public class GameManager : Singleton<GameManager>
     /// </summary>
     public void EnteredSweet(GameSweet sweet)
     {
+        if (isGameOver)
+        {
+            return;
+        }
         enteredSweet = sweet;
     }
     /// <summary>
