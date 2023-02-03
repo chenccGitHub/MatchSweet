@@ -27,6 +27,7 @@ public class UIGamePanel : View
             time = 0;
             GameManager.Instance.isGameOver = true;
             UIManager.Show<UIGameOverPanel>();
+            UIManager.GetView<UIGameOverPanel>().ResultScore(score);
             return;
         }
         if (scoreTime <= 0.05f)

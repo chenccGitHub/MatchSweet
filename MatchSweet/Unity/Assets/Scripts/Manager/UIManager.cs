@@ -34,7 +34,6 @@ public class UIManager
             if (view.Value is T)
             {
                 view.Value.Show();
-                break;
             }
         }
     }
@@ -45,7 +44,6 @@ public class UIManager
             if (view.Value is T)
             {
                 view.Value.Hide();
-                break;
             }
         }
     }
