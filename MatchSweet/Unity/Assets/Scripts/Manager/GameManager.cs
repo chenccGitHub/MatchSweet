@@ -35,7 +35,7 @@ public class GameManager : Singleton<GameManager>
 
     public bool isGameOver; //游戏结束
     private float gameTime = 60; //游戏时间
-    private float scoreTime ; //加分数的时间
+    private float scoreTime; //加分数的时间
     private int score = 0;
     private int currentScore = 0;//当前分数
 
@@ -404,9 +404,40 @@ public class GameManager : Singleton<GameManager>
         {
             sweets[x, y].ClearedComponent.Clear();
             CreateNewSweet(x, y, SweetsType.EMPTY);
+            ClearBarrir(x, y);
             return true;
         }
         return false;
+    }
+    /// <summary>
+    /// 清除障碍算法
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    private void ClearBarrir(int x ,int y)
+    {
+        for (int friendX = x - 1; friendX <= x + 1; friendX++)
+        {
+            if (friendX != x && friendX >= 0  && friendX < xColumn)
+            {
+                if (sweets[friendX,y].Type == SweetsType.BARRIER && sweets[friendX,y].CanClear())
+                {
+                    sweets[friendX, y].ClearedComponent.Clear();
+                    CreateNewSweet(friendX, y, SweetsType.EMPTY);
+                }
+            }
+        }
+        for (int friendY = y - 1; friendY <= y + 1; friendY++)
+        {
+            if (friendY != y && friendY >= 0 && friendY < yRow)
+            {
+                if (sweets[x, friendY].Type == SweetsType.BARRIER && sweets[x, friendY].CanClear())
+                {
+                    sweets[x, friendY].ClearedComponent.Clear();
+                    CreateNewSweet(x, friendY, SweetsType.EMPTY);
+                }
+            }
+        }
     }
     /// <summary>
     /// 清除所有完成匹配的甜品元素
@@ -421,17 +452,63 @@ public class GameManager : Singleton<GameManager>
             {
                 if (!sweets[x, y].CanClear()) continue;
                 List<GameSweet> matchList = MatchSweets(sweets[x, y], x, y);
-                if (matchList == null) continue;
-                foreach (var tempSweet in matchList)
+                if (matchList != null)
                 {
-                    if (ClearSweet(tempSweet.X, tempSweet.Y))
+                    SweetsType specialSweetType = SweetsType.COUNT; //是否产生特殊甜品
+                    GameSweet specialSweet = matchList[Random.Range(0, matchList.Count)];
+                    int specialSweetX = specialSweet.X;
+                    int specialSweetY = specialSweet.Y;
+                    //四个产生行列消除甜品
+                    if (matchList.Count == 4)
                     {
-                        needRefill = true;
+                        specialSweetType = (SweetsType)Random.Range((int)SweetsType.ROWCLEAR, (int)SweetsType.COLUMNCLEAR +1);
                     }
-                }
+                    //5个产生彩虹糖甜品
+                    else if (matchList.Count == 5) { }
+                    foreach (var tempSweet in matchList)
+                    {
+                        if (ClearSweet(tempSweet.X, tempSweet.Y))
+                        {
+                            needRefill = true;
+                        }
+                    }
+                    //不等于标记类型说明已经产生了消除行列特殊甜品
+                    if (specialSweetType != SweetsType.COUNT)
+                    {
+                        Destroy(sweets[specialSweetX, specialSweetY]);
+                        GameSweet newSweet = CreateNewSweet(specialSweetX, specialSweetY, specialSweetType);
+                        if (specialSweetType == SweetsType.ROWCLEAR || specialSweetType == SweetsType.COLUMNCLEAR && newSweet.CanColor() && matchList[0].CanColor())
+                        {
+                            newSweet.ColoredComponent.SetColor(matchList[0].ColoredComponent.Color);
+                        }
+                        //彩虹唐生成
+                    }
+                } 
+                
             }
         }
         return needRefill;
+    }
+
+    /// <summary>
+    /// 行消除
+    /// </summary>
+    public void ClearRowSweet(int row)
+    {
+        for (int x = 0; x < xColumn; x++)
+        {
+            ClearSweet(x,row);
+        }
+    }
+    /// <summary>
+    /// 列消除
+    /// </summary>
+    public void ClearLineSweet(int column)
+    {
+        for (int y = 0; y < yRow; y++)
+        {
+            ClearSweet(column, y);
+        }
     }
     /// <summary>
     /// 匹配算法
@@ -518,6 +595,7 @@ public class GameManager : Singleton<GameManager>
         }
         return null;
     }
+
     /// <summary>
     /// c重新开始游戏
     /// </summary>

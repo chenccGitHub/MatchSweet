@@ -12,6 +12,10 @@ public class ClearSweet : MonoBehaviour
     public AudioClip clearSweetClip;
 
     public bool IsClearing { get => isClearing;}
+    private void Awake()
+    {
+        sweet = GetComponent<GameSweet>();
+    }
     /// <summary>
     /// 消除甜品
     /// </summary>
