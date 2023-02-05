@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// 甜点枚举
@@ -85,20 +86,26 @@ public class GameManager : Singleton<GameManager>
     private GameSweet pressedSweet; //鼠标按下的甜品
     private GameSweet enteredSweet; //鼠标进入的甜品
     #endregion
-    private void Start()
+    public void Start()
     {
         Init();
         TestCreatBarrier();
         StartCoroutine(IAllFill());
-        UIManager.Show<UIGamePanel>();
+        UIManager.Show<UIMainPanel>();
     }
     /// <summary>
     /// 测试生成障碍饼干
     /// </summary>
     private void TestCreatBarrier()
     {
-        Destroy(sweets[4, 4].gameObject);
-        CreateNewSweet(4, 4, SweetsType.BARRIER);
+        for (int i = 3; i < 8; i++)
+        {
+            Destroy(sweets[i, 4].gameObject);
+            GameSweet sweet = CreateNewSweet(i, 4, SweetsType.NORMAL);
+            sweet.ColoredComponent.SetColor(ColorType.BLUE);
+        }
+        
+        
     }
     private void Init()
     {
@@ -308,12 +315,30 @@ public class GameManager : Singleton<GameManager>
         sweets[sweet1.X, sweet1.Y] = sweet2;
         sweets[sweet2.X, sweet2.Y] = sweet1;
         //检测匹配元素是否为空
-        if (MatchSweets(sweet1, sweet2.X, sweet2.Y) != null || MatchSweets(sweet2, sweet1.X, sweet1.Y) != null)
+        if (MatchSweets(sweet1, sweet2.X, sweet2.Y) != null || MatchSweets(sweet2, sweet1.X, sweet1.Y) != null || sweet1.Type == SweetsType.RAINBOWCANDY || sweet2.Type == SweetsType.RAINBOWCANDY)
         {
             int tempX = sweet1.X;
             int tempY = sweet1.Y;
             sweet1.MovedComponent.Move(sweet2.X, sweet2.Y, fillTime);
             sweet2.MovedComponent.Move(tempX, tempY, fillTime);
+            if (sweet1.Type == SweetsType.RAINBOWCANDY && sweet1.CanClear() && sweet2.CanClear())
+            {
+                ClearColorSweet clearColor = sweet1.GetComponent<ClearColorSweet>();
+                if (clearColor != null)
+                {
+                    clearColor.ClearColor = sweet2.ColoredComponent.Color;
+                }
+                ClearSweet(sweet1.X, sweet1.Y);
+            }
+            if (sweet2.Type == SweetsType.RAINBOWCANDY && sweet1.CanClear() && sweet2.CanClear())
+            {
+                ClearColorSweet clearColor = sweet2.GetComponent<ClearColorSweet>();
+                if (clearColor != null)
+                {
+                    clearColor.ClearColor = sweet1.ColoredComponent.Color;
+                }
+                ClearSweet(sweet2.X, sweet2.Y);
+            }
             ClearAllMatchedSweet();
             StartCoroutine(IAllFill());
         }
@@ -464,7 +489,10 @@ public class GameManager : Singleton<GameManager>
                         specialSweetType = (SweetsType)Random.Range((int)SweetsType.ROWCLEAR, (int)SweetsType.COLUMNCLEAR +1);
                     }
                     //5个产生彩虹糖甜品
-                    else if (matchList.Count == 5) { }
+                    else if (matchList.Count >= 5) 
+                    {
+                        specialSweetType = SweetsType.RAINBOWCANDY;
+                    }
                     foreach (var tempSweet in matchList)
                     {
                         if (ClearSweet(tempSweet.X, tempSweet.Y))
@@ -482,6 +510,10 @@ public class GameManager : Singleton<GameManager>
                             newSweet.ColoredComponent.SetColor(matchList[0].ColoredComponent.Color);
                         }
                         //彩虹唐生成
+                        if (specialSweetType == SweetsType.RAINBOWCANDY && newSweet.CanColor())
+                        {
+                            newSweet.ColoredComponent.SetColor(ColorType.ANY);
+                        }
                     }
                 } 
                 
@@ -508,6 +540,23 @@ public class GameManager : Singleton<GameManager>
         for (int y = 0; y < yRow; y++)
         {
             ClearSweet(column, y);
+        }
+    }
+    /// <summary>
+    /// 清除相同颜色甜品
+    /// </summary>
+    public void ClearColorSweet(ColorType color)
+    {
+        for (int x = 0; x < xColumn; x++)
+        {
+            for (int y = 0; y < yRow; y++)
+            {
+                //判断甜品是否是有颜色类型的且（当前甜品颜色是否等于清除甜品颜色或者清除甜品颜色是彩虹糖类型）
+                if (sweets[x,y].CanColor() && (sweets[x,y].ColoredComponent.Color == color || color == ColorType.ANY))
+                {
+                    ClearSweet(x, y);
+                }
+            }
         }
     }
     /// <summary>
@@ -605,7 +654,6 @@ public class GameManager : Singleton<GameManager>
         isGameOver = false;
         UIManager.GetView<UIGamePanel>().SetTimeAnimation(true);
         UIManager.Close<UIGameOverPanel>();
-
     }
     public void GameOver()
     {

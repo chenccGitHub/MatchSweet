@@ -15,6 +15,7 @@ public class UIManager
             view.Value.Init();
             view.Value.Hide();
         }
+        Show<UIMainPanel>();
     }
     public static T GetView<T>() where T : View
     {

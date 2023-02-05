@@ -5,9 +5,9 @@ using UnityEngine.UI;
 
 public class UIGamePanel : View
 {
-    private Text timeText; //µ¹¼ÆÊ±ÎÄ±¾
-    private Text scoreText; //·ÖÊıÎÄ±¾
-    private Button gameResetBtn; //ÓÎÏ·ÖØÖÃ°´Å¥
+    private Text timeText; //å€’è®¡æ—¶æ–‡æœ¬
+    private Text scoreText; //åˆ†æ•°æ–‡æœ¬
+    private Button gameResetBtn; //æ¸¸æˆé‡ç½®æŒ‰é’®
 
     public override void Init()
     {
@@ -17,28 +17,28 @@ public class UIGamePanel : View
         gameResetBtn.onClick.AddListener(ResetGame);
     }
     /// <summary>
-    /// ÖØĞÂ¿ªÊ¼ÓÎÏ·
+    /// é‡æ–°å¼€å§‹æ¸¸æˆ
     /// </summary>
     public void ResetGame()
     {
         GameManager.Instance.ResetGame();
     }
     /// <summary>
-    /// ÉèÖÃ·ÖÊıÏÔÊ¾
+    /// è®¾ç½®åˆ†æ•°æ˜¾ç¤º
     /// </summary>
     public void SetScoreText(int value)
     {
         scoreText.text = value.ToString();
     }
     /// <summary>
-    /// ÉèÖÃÊ±¼äÏÔÊ¾
+    /// è®¾ç½®æ—¶é—´æ˜¾ç¤º
     /// </summary>
     public void SetTimeText(float value)
     {
         timeText.text = value.ToString("0");
     }
     /// <summary>
-    /// ÉèÖÃ²¥·ÅÔİÍ£Ê±¼ä¶¯»­
+    /// è®¾ç½®æ’­æ”¾æš‚åœæ—¶é—´åŠ¨ç”»
     /// </summary>
     /// <param name="isPlayAnimation"></param>
     public void SetTimeAnimation(bool isPlayAnimation)

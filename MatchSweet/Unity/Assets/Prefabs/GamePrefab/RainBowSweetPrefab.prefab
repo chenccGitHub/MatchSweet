@@ -13,8 +13,8 @@ GameObject:
   - component: {fileID: 7207761953054801292}
   - component: {fileID: 5148025269076396657}
   - component: {fileID: 7123830590679685614}
-  - component: {fileID: 7123830590174539155}
-  - component: {fileID: 7123830590358225231}
+  - component: {fileID: 2141021936}
+  - component: {fileID: 1198022852966162545}
   m_Layer: 0
   m_Name: RainBowSweetPrefab
   m_TagString: Untagged
@@ -79,20 +79,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   colorSprites:
-  - color: 0
-    sprite: {fileID: 21300000, guid: 38a0ee623eec0b44380f9015c44268ea, type: 3}
   - color: 6
     sprite: {fileID: 21300000, guid: 4c2cf86324edaa041a728bdb5e7fca3d, type: 3}
-  - color: 1
-    sprite: {fileID: 21300000, guid: 32d521ee0446b5a478739e80dec7dfd9, type: 3}
-  - color: 4
-    sprite: {fileID: 21300000, guid: c0521331ff0265648aca5470fa6c1e4e, type: 3}
-  - color: 5
-    sprite: {fileID: 21300000, guid: 2f5541ddc6d03394c9bb904306064249, type: 3}
-  - color: 2
-    sprite: {fileID: 21300000, guid: 6b892a88f400a8c49b93e195ca493ca5, type: 3}
-  - color: 3
-    sprite: {fileID: 21300000, guid: 5fdf0ab3dfbca2947b07fc8a2f0e04b0, type: 3}
 --- !u!65 &7123830590679685614
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -106,7 +94,7 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!95 &7123830590174539155
+--- !u!95 &2141021936
 Animator:
   serializedVersion: 4
   m_ObjectHideFlags: 0
@@ -116,7 +104,7 @@ Animator:
   m_GameObject: {fileID: 3532414166651239337}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 8cb3de7184639a24682ce6e7ff61fadc, type: 2}
+  m_Controller: {fileID: 9100000, guid: 154c04bce86dc9241b57654426d8c4f1, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -126,7 +114,7 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &7123830590358225231
+--- !u!114 &1198022852966162545
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -135,11 +123,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 3532414166651239337}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 298198dc82e336a4fb3541be25095009, type: 3}
+  m_Script: {fileID: 11500000, guid: 694d8955a327d364bbcbb09fb76ccd27, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  clearAnimation: {fileID: 7400000, guid: 6ca88c68251bd81489b8bd9625fb0b4e, type: 2}
-  clearSweetClip: {fileID: 8300000, guid: 9cb19eb032d304b07acec596ae2ce4a4, type: 3}
+  clearAnimation: {fileID: 7400000, guid: e0d05ac646ae75348b9ff8fb8a015161, type: 2}
+  clearSweetClip: {fileID: 8300000, guid: 5bbd199ed971843ce8d2887887c684cf, type: 3}
 --- !u!1 &3532414167996274822
 GameObject:
   m_ObjectHideFlags: 0

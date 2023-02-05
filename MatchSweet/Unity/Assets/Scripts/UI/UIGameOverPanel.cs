@@ -7,13 +7,21 @@ public class UIGameOverPanel : View
 {
     private Text overScoreText;
     private Button resetGameBtn;
+    private Button returnMainBtn;
     public override void Init()
     {
         overScoreText = transform.Find("OverText/OverScoreText").GetComponent<Text>();
         resetGameBtn = transform.Find("ResetGameBtn").GetComponent<Button>();
+        returnMainBtn = transform.Find("ReturnMainBtn").GetComponent<Button>();
         resetGameBtn.onClick.AddListener(() =>
         {
             GameManager.Instance.ResetGame();
+        });
+        returnMainBtn.onClick.AddListener(() =>
+        {
+            gameObject.SetActive(false);
+            UIManager.Close<UIGamePanel>();
+            UIManager.Show<UIMainPanel>();
         });
     }
     public void ResultScore(int value)
