@@ -19,9 +19,7 @@ public class UIGameOverPanel : View
         });
         returnMainBtn.onClick.AddListener(() =>
         {
-            gameObject.SetActive(false);
-            UIManager.Close<UIGamePanel>();
-            UIManager.Show<UIMainPanel>();
+            GameManager.Instance.ReturnMain();
         });
     }
     public void ResultScore(int value)

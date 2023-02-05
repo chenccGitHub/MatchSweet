@@ -13,8 +13,9 @@ public class UIMainPanel : View
     }
     public void StartNewGame()
     {
+        FindObjectOfType<GameManager>().enabled = true;
         gameObject.SetActive(false);
         UIManager.Show<UIGamePanel>();
-        FindObjectOfType<GameManager>().enabled = true;
+        GameManager.Instance.ResetGame();
     }
 }

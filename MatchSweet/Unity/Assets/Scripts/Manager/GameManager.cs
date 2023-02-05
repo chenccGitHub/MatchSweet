@@ -38,6 +38,15 @@ public class GameManager : Singleton<GameManager>
     private float gameTime = 60; //游戏时间
     private float scoreTime; //加分数的时间
     private int score = 0;
+    public int Score 
+    { 
+        get => score;
+        set
+        {
+            score = value;
+            UIManager.GetView<UIGamePanel>().SetScoreText(score);
+        }
+    }
     private int currentScore = 0;//当前分数
 
 
@@ -57,7 +66,7 @@ public class GameManager : Singleton<GameManager>
         }
         else
         {
-            if (currentScore < score)
+            if (currentScore < Score)
             {
                 currentScore += 50;
                 UIManager.GetView<UIGamePanel>().SetScoreText(currentScore);
@@ -65,12 +74,6 @@ public class GameManager : Singleton<GameManager>
             }
         }
         UIManager.GetView<UIGamePanel>().SetTimeText(gameTime);
-    }
-
-    public void AddScore(int value)
-    {
-        score += value;
-        UIManager.GetView<UIGamePanel>().SetScoreText(score);
     }
     #region
     [Header("甜品元素相关类型")]
@@ -89,9 +92,6 @@ public class GameManager : Singleton<GameManager>
     public void Start()
     {
         Init();
-        TestCreatBarrier();
-        StartCoroutine(IAllFill());
-        UIManager.Show<UIMainPanel>();
     }
     /// <summary>
     /// 测试生成障碍饼干
@@ -126,16 +126,7 @@ public class GameManager : Singleton<GameManager>
                 chocolate.transform.SetParent(transform);
             }
         }
-        //GameSweet二维数组，作用于具体游戏位置
-        sweets = new GameSweet[xColumn, yRow];
-        for (int x = 0; x < xColumn; x++)
-        {
-            for (int y = 0; y < yRow; y++)
-            {
-                //游戏开始生成空类型的甜品用于做检测当前位置是否有元素
-                CreateNewSweet(x, y, SweetsType.EMPTY);
-            }
-        }
+        //ResetCreatSweet();
     }
     /// <summary>
     /// 巧乐力生成的位置坐标
@@ -373,6 +364,10 @@ public class GameManager : Singleton<GameManager>
     /// </summary>
     public void ReleaseSweet()
     {
+        if (isGameOver)
+        {
+            return;
+        }
         ExchangeSweets(pressedSweet, enteredSweet);
     }
     /// <summary>
@@ -646,20 +641,60 @@ public class GameManager : Singleton<GameManager>
     }
 
     /// <summary>
-    /// c重新开始游戏
+    /// 重新开始游戏
     /// </summary>
     public void ResetGame()
     {
         gameTime = 60;
         isGameOver = false;
+        Score = 0;
         UIManager.GetView<UIGamePanel>().SetTimeAnimation(true);
         UIManager.Close<UIGameOverPanel>();
+        if (sweets != null && sweets.Length > 0)
+        {
+            for (int x = 0; x < xColumn; x++)
+            {
+                for (int y = 0; y < yRow; y++)
+                {
+                    Destroy(sweets[x, y].gameObject);
+                }
+            }
+        }
+        ResetCreatSweet();
+    }
+    /// <summary>
+    /// 重新生成全部甜品
+    /// </summary>
+    public void ResetCreatSweet()
+    {
+        //GameSweet二维数组，作用于具体游戏位置
+        sweets = new GameSweet[xColumn, yRow];
+        for (int x = 0; x < xColumn; x++)
+        {
+            for (int y = 0; y < yRow; y++)
+            {
+                //游戏开始生成空类型的甜品用于做检测当前位置是否有元素
+                CreateNewSweet(x, y, SweetsType.EMPTY);
+            }
+        }
+        TestCreatBarrier();
+        StartCoroutine(IAllFill());
     }
     public void GameOver()
     {
         GameManager.Instance.isGameOver = true;
         UIManager.Show<UIGameOverPanel>();
-        UIManager.GetView<UIGameOverPanel>().ResultScore(score);
+        UIManager.GetView<UIGameOverPanel>().ResultScore(Score);
         UIManager.GetView<UIGamePanel>().SetTimeAnimation(false);
+    }
+    /// <summary>
+    /// 返回主菜单
+    /// </summary>
+    public void ReturnMain()
+    {
+        UIManager.Close<UIGamePanel>();
+        UIManager.Close<UIGameOverPanel>();
+        UIManager.Show<UIMainPanel>();
+        GetComponent<GameManager>().enabled = false;
     }
 }
