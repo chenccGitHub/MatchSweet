@@ -21,6 +21,7 @@ public class UIGamePanel : View
     /// </summary>
     public void ResetGame()
     {
+        GetComponent<AudioSource>().Play();
         GameManager.Instance.ResetGame();
     }
     /// <summary>

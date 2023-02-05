@@ -645,7 +645,7 @@ public class GameManager : Singleton<GameManager>
     /// </summary>
     public void ResetGame()
     {
-        gameTime = 60;
+        gameTime = 40;
         isGameOver = false;
         Score = 0;
         UIManager.GetView<UIGamePanel>().SetTimeAnimation(true);

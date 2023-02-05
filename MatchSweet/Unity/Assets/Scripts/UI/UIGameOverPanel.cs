@@ -15,7 +15,7 @@ public class UIGameOverPanel : View
         returnMainBtn = transform.Find("ReturnMainBtn").GetComponent<Button>();
         resetGameBtn.onClick.AddListener(() =>
         {
-            GameManager.Instance.ResetGame();
+            UIManager.GetView<UIGamePanel>().ResetGame();
         });
         returnMainBtn.onClick.AddListener(() =>
         {
