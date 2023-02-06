@@ -102,7 +102,7 @@ public class GameManager : Singleton<GameManager>
     private void Update()
     {
         gameTime -= Time.deltaTime;
-        if (gameTime <= 0)
+        if (gameTime <= 0 || isGameOver)
         {
             gameTime = 0;
             //游戏结束
@@ -160,14 +160,16 @@ public class GameManager : Singleton<GameManager>
         {
             for (int i = 0; i < level; i++)
             {
-                int x = Random.Range(1, 8);
-                int y = Random.Range(1, 8);
-                if (sweets[x,y] != null)
+                for (int j = 0; j < 2; j++)
                 {
-                    Destroy(sweets[x, y].gameObject);
-                    CreateNewSweet(x, y, SweetsType.BARRIER);
-                }
-                
+                    int x = Random.Range(1, 8);
+                    int y = Random.Range(1, 8);
+                    if (sweets[x, y] != null)
+                    {
+                        Destroy(sweets[x, y].gameObject);
+                        CreateNewSweet(x, y, SweetsType.BARRIER);
+                    }
+                }     
             }
         }
         
@@ -400,7 +402,6 @@ public class GameManager : Singleton<GameManager>
             }
             ClearAllMatchedSweet();
             StartCoroutine(IAllFill());
-            StepCount--;
         }
         else
         {
@@ -438,6 +439,8 @@ public class GameManager : Singleton<GameManager>
             return;
         }
         ExchangeSweets(pressedSweet, enteredSweet);
+        StepCount--;
+
     }
     /// <summary>
     /// 匹配甜品算法
@@ -716,7 +719,7 @@ public class GameManager : Singleton<GameManager>
     {
         Level = level;
         gameTime = 80-level*5;
-        StepCount = 15-level;
+        StepCount = 16-level;
         AchieveScore = 1000*level;
         isGameOver = false;
         Score = 0;
