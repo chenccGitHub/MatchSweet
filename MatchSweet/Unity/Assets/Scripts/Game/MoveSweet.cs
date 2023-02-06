@@ -16,7 +16,8 @@ public class MoveSweet : MonoBehaviour
         {
             StopCoroutine(moveCoroutine);
         }
-        StartCoroutine(IMoveCoroutine(newX,newY,fillTime));
+        moveCoroutine = IMoveCoroutine(newX, newY, fillTime);
+        StartCoroutine(moveCoroutine);
     }
     public IEnumerator IMoveCoroutine(int newX, int newY, float fillTime)
     {

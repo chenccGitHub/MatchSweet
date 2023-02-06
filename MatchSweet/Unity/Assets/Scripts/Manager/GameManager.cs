@@ -315,7 +315,7 @@ public class GameManager : Singleton<GameManager>
     {
         bool isFillFinish = false;
         //斜向填充
-        for (int down = -1; down <= 1; down++)
+        for (int down = -xColumn + 1; down <= xColumn; down++)
         {
             //等于0是垂直填充
             if (down == 0) continue;
