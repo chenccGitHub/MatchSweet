@@ -37,19 +37,68 @@ public class GameManager : Singleton<GameManager>
     public bool isGameOver; //游戏结束
     private float gameTime = 60; //游戏时间
     private float scoreTime; //加分数的时间
+    private int stepCount;  //游戏步数
+    public int StepCount
+    {
+        get => stepCount;
+        set
+        {
+            stepCount = value;
+            UIManager.GetView<UIGamePanel>().SetStepCount(stepCount);
+            if (stepCount <= 0)
+            {
+                stepCount = 0;
+                if (score >= achieveScore)
+                {
+                    //游戏胜利 打开胜利窗口 进入下一关
+                    GameVictory();
+                }
+                else
+                {
+                    GameOver();
+                }
+
+            }
+        }
+    }
+    private int achieveScore;//游戏达成分数
+    public int AchieveScore
+    {
+        get => achieveScore;
+        set
+        {
+            achieveScore = value;
+        }
+    }
     private int score = 0;
-    public int Score 
-    { 
+    public int Score
+    {
         get => score;
         set
         {
             score = value;
             UIManager.GetView<UIGamePanel>().SetScoreText(score);
+            //if (score >= achieveScore)
+            //{
+            //    //游戏胜利 打开胜利窗口 进入下一关
+            //    GameVictory();
+
+            //}
         }
     }
+
     private int currentScore = 0;//当前分数
 
-
+    private int level; //游戏关卡
+    public int Level
+    {
+        get => level;
+        set
+        {
+            level = value;
+            UIManager.GetView<UIGamePanel>().SetLevelText(level);
+        }
+    }
     private void Update()
     {
         gameTime -= Time.deltaTime;
@@ -96,16 +145,35 @@ public class GameManager : Singleton<GameManager>
     /// <summary>
     /// 测试生成障碍饼干
     /// </summary>
-    private void TestCreatBarrier()
+    private void TestCreatBarrier(int level)
     {
-        for (int i = 3; i < 8; i++)
+        if (level == 1)
         {
-            Destroy(sweets[i, 4].gameObject);
-            GameSweet sweet = CreateNewSweet(i, 4, SweetsType.NORMAL);
-            sweet.ColoredComponent.SetColor(ColorType.BLUE);
+            for (int i = 3; i < 8; i++)
+            {
+                Destroy(sweets[i, 4].gameObject);
+                GameSweet sweet = CreateNewSweet(i, 4, SweetsType.NORMAL);
+                sweet.ColoredComponent.SetColor(ColorType.BLUE);
+            }
+        }
+        else if (level > 1)
+        {
+            for (int i = 0; i < level; i++)
+            {
+                int x = Random.Range(1, 8);
+                int y = Random.Range(1, 8);
+                if (sweets[x,y] != null)
+                {
+                    Destroy(sweets[x, y].gameObject);
+                    CreateNewSweet(x, y, SweetsType.BARRIER);
+                }
+                
+            }
         }
         
-        
+
+
+
     }
     private void Init()
     {
@@ -126,7 +194,7 @@ public class GameManager : Singleton<GameManager>
                 chocolate.transform.SetParent(transform);
             }
         }
-        //ResetCreatSweet();
+        ShowSweetsGrid(false);
     }
     /// <summary>
     /// 巧乐力生成的位置坐标
@@ -332,14 +400,15 @@ public class GameManager : Singleton<GameManager>
             }
             ClearAllMatchedSweet();
             StartCoroutine(IAllFill());
+            StepCount--;
         }
         else
         {
             sweets[sweet1.X, sweet1.Y] = sweet1;
             sweets[sweet2.X, sweet2.Y] = sweet2;
         }
-       
-        
+
+
     }
     /// <summary>
     /// 鼠标按下甜品
@@ -434,13 +503,13 @@ public class GameManager : Singleton<GameManager>
     /// </summary>
     /// <param name="x"></param>
     /// <param name="y"></param>
-    private void ClearBarrir(int x ,int y)
+    private void ClearBarrir(int x, int y)
     {
         for (int friendX = x - 1; friendX <= x + 1; friendX++)
         {
-            if (friendX != x && friendX >= 0  && friendX < xColumn)
+            if (friendX != x && friendX >= 0 && friendX < xColumn)
             {
-                if (sweets[friendX,y].Type == SweetsType.BARRIER && sweets[friendX,y].CanClear())
+                if (sweets[friendX, y].Type == SweetsType.BARRIER && sweets[friendX, y].CanClear())
                 {
                     sweets[friendX, y].ClearedComponent.Clear();
                     CreateNewSweet(friendX, y, SweetsType.EMPTY);
@@ -481,10 +550,10 @@ public class GameManager : Singleton<GameManager>
                     //四个产生行列消除甜品
                     if (matchList.Count == 4)
                     {
-                        specialSweetType = (SweetsType)Random.Range((int)SweetsType.ROWCLEAR, (int)SweetsType.COLUMNCLEAR +1);
+                        specialSweetType = (SweetsType)Random.Range((int)SweetsType.ROWCLEAR, (int)SweetsType.COLUMNCLEAR + 1);
                     }
                     //5个产生彩虹糖甜品
-                    else if (matchList.Count >= 5) 
+                    else if (matchList.Count >= 5)
                     {
                         specialSweetType = SweetsType.RAINBOWCANDY;
                     }
@@ -510,8 +579,8 @@ public class GameManager : Singleton<GameManager>
                             newSweet.ColoredComponent.SetColor(ColorType.ANY);
                         }
                     }
-                } 
-                
+                }
+
             }
         }
         return needRefill;
@@ -524,7 +593,7 @@ public class GameManager : Singleton<GameManager>
     {
         for (int x = 0; x < xColumn; x++)
         {
-            ClearSweet(x,row);
+            ClearSweet(x, row);
         }
     }
     /// <summary>
@@ -547,7 +616,7 @@ public class GameManager : Singleton<GameManager>
             for (int y = 0; y < yRow; y++)
             {
                 //判断甜品是否是有颜色类型的且（当前甜品颜色是否等于清除甜品颜色或者清除甜品颜色是彩虹糖类型）
-                if (sweets[x,y].CanColor() && (sweets[x,y].ColoredComponent.Color == color || color == ColorType.ANY))
+                if (sweets[x, y].CanColor() && (sweets[x, y].ColoredComponent.Color == color || color == ColorType.ANY))
                 {
                     ClearSweet(x, y);
                 }
@@ -586,7 +655,7 @@ public class GameManager : Singleton<GameManager>
                     if (!matchSweets.Contains(sweets[x, y]))
                     {
                         matchSweets.Add(sweets[x, y]);
-                    } 
+                    }
                 }
                 else
                 {
@@ -610,7 +679,7 @@ public class GameManager : Singleton<GameManager>
                 }
                 int x = matchSweet1[i].X;
                 int y = 100;     //100表示不用传进来的参数
-                if (matchType != MatchType.COLUMN_ROW) 
+                if (matchType != MatchType.COLUMN_ROW)
                 {
                     x = 100;
                     y = matchSweet1[i].Y;
@@ -643,13 +712,17 @@ public class GameManager : Singleton<GameManager>
     /// <summary>
     /// 重新开始游戏
     /// </summary>
-    public void ResetGame()
+    public void ResetGame(int level)
     {
-        gameTime = 40;
+        Level = level;
+        gameTime = 80-level*5;
+        StepCount = 15-level;
+        AchieveScore = 1000*level;
         isGameOver = false;
         Score = 0;
         UIManager.GetView<UIGamePanel>().SetTimeAnimation(true);
         UIManager.Close<UIGameOverPanel>();
+        UIManager.Close<UIGameVictoryPanel>();
         if (sweets != null && sweets.Length > 0)
         {
             for (int x = 0; x < xColumn; x++)
@@ -677,7 +750,7 @@ public class GameManager : Singleton<GameManager>
                 CreateNewSweet(x, y, SweetsType.EMPTY);
             }
         }
-        TestCreatBarrier();
+        TestCreatBarrier(level);
         StartCoroutine(IAllFill());
     }
     public void GameOver()
@@ -692,9 +765,39 @@ public class GameManager : Singleton<GameManager>
     /// </summary>
     public void ReturnMain()
     {
+        ShowSweetsGrid(false);
         UIManager.Close<UIGamePanel>();
         UIManager.Close<UIGameOverPanel>();
+        UIManager.Close<UISelectPanel>();
         UIManager.Show<UIMainPanel>();
         GetComponent<GameManager>().enabled = false;
+    }
+    /// <summary>
+    /// 游戏胜利
+    /// </summary>
+    private void GameVictory()
+    {
+        GameManager.Instance.isGameOver = true;
+        UIManager.Show<UIGameVictoryPanel>();
+        UIManager.GetView<UIGameVictoryPanel>().ResultScore(Score);
+        UIManager.GetView<UIGamePanel>().SetTimeAnimation(false);
+        UIManager.GetView<UIGameVictoryPanel>().SetStarCount(Mathf.Floor(score / achieveScore));
+    }
+    public void AgainGame()
+    {
+        Level++;
+        ResetGame(level);
+    }
+    /// <summary>
+    /// 是否显示甜品网格
+    /// </summary>
+    /// <param name="isShow"></param>
+    public void ShowSweetsGrid(bool isShow)
+    {
+        Transform[] allGridsPrefab = GetComponentsInChildren<Transform>(true);
+        foreach (var item in allGridsPrefab)
+        {
+            item.gameObject.SetActive(isShow);
+        }
     }
 }

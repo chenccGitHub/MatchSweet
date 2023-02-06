@@ -4,17 +4,17 @@ using UnityEngine;
 
 public class UIRoot : MonoBehaviour
 {
-    public static Dictionary<string, View> m_views = new Dictionary<string, View>(); //¶¨ÒåÒ»¸ö×Öµä´æ´¢ËùÓĞUI½çÃæ
+    public static Dictionary<string, View> m_views = new Dictionary<string, View>(); //å®šä¹‰ä¸€ä¸ªå­—å…¸å­˜å‚¨æ‰€æœ‰UIç•Œé¢
     private void Awake()
     {
-        var prefabs = Resources.LoadAll<Transform>("UIPrefab");//¼ÓÔØUIPrefabÎÄ¼ş¼ĞÏÂµÄËùÓĞUIÔ¤ÖÆÌå
+        var prefabs = Resources.LoadAll<Transform>("UIPrefab");//åŠ è½½UIPrefabæ–‡ä»¶å¤¹ä¸‹çš„æ‰€æœ‰UIé¢„åˆ¶ä½“
         foreach (Transform view in prefabs)
         {
             if (!m_views.ContainsKey(view.name))
             {
                 Transform prefab = Instantiate(view, transform);
-                prefab.name = prefab.name.Replace("(Clone)", "");//È¥³ıÊµÀı»¯ÎïÌåµÄ(Clone)ºó×º£¬ºÍÔ¤ÖÆÌåÃû×ÖÍ³Ò»
-                m_views.Add(prefab.name, prefab.GetComponent<View>());//´æÈë×Öµä
+                prefab.name = prefab.name.Replace("(Clone)", "");//å»é™¤å®ä¾‹åŒ–ç‰©ä½“çš„(Clone)åç¼€ï¼Œå’Œé¢„åˆ¶ä½“åå­—ç»Ÿä¸€
+                m_views.Add(prefab.name, prefab.GetComponent<View>());//å­˜å…¥å­—å…¸
             }
         }
         new UIManager();

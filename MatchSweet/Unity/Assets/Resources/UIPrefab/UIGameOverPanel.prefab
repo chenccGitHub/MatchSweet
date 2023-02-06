@@ -918,18 +918,18 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 12800000, guid: 22def482e077f9d4da46d9f0825f216a, type: 3}
-    m_FontSize: 40
+    m_FontSize: 50
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 3
-    m_MaxSize: 40
+    m_MaxSize: 50
     m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u65F6\u95F4\u5230\u4E86\uFF0C\u6E38\u620F\u7ED3\u675F\uFF01"
+  m_Text: "\u6E38\u620F\u7ED3\u675F\uFF01"
 --- !u!114 &6146839625120702867
 MonoBehaviour:
   m_ObjectHideFlags: 0
