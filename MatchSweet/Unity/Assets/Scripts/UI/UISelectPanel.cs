@@ -10,8 +10,8 @@ public class UISelectPanel : View
     public override void Init()
     {
         Button[] levelBtn;
-        grid = transform.Find("Grid");
-        levelBtn = grid.GetComponentsInChildren<Button>();
+        grid = transform.Find("Scroll View/Viewport/Content/Grid");
+        levelBtn = grid.GetComponentsInChildren<Button>(true);
         for (int i = 0; i < levelBtn.Length; i++)
         {
             int index = i;
@@ -32,6 +32,22 @@ public class UISelectPanel : View
         {
             GameManager.Instance.ReturnMain();
         });
+        SetChangeLevel(GameManager.Instance.date.levelDates[0].level);
 
+    }
+    /// <summary>
+    /// …Ë÷√—°‘Òπÿø®
+    /// </summary>
+    public void SetChangeLevel(int level)
+    {
+        foreach (Transform item in grid)
+        {
+            item.gameObject.SetActive(false);
+        }
+        for (int i = 0; i < level; i++)
+        {
+            grid.GetChild(i).gameObject.SetActive(true);
+        }
+        
     }
 }

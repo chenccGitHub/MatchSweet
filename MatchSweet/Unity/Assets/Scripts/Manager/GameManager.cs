@@ -38,11 +38,13 @@ public class GameManager : Singleton<GameManager>
     private float gameTime = 60; //游戏时间
     private float scoreTime; //加分数的时间
     private int stepCount;  //游戏步数
+    public Date date;       //记录一些需要保存的数据
     public int StepCount
     {
         get => stepCount;
         set
         {
+            
             stepCount = value;
             UIManager.GetView<UIGamePanel>().SetStepCount(stepCount);
             if (stepCount <= 0)
@@ -51,7 +53,7 @@ public class GameManager : Singleton<GameManager>
                 if (score >= achieveScore)
                 {
                     //游戏胜利 打开胜利窗口 进入下一关
-                    GameVictory();
+                    StartCoroutine(GameVictory());
                 }
                 else
                 {
@@ -97,6 +99,7 @@ public class GameManager : Singleton<GameManager>
         {
             level = value;
             UIManager.GetView<UIGamePanel>().SetLevelText(level);
+            date.levelDates[0].level = level;
         }
     }
     private void Update()
@@ -402,6 +405,7 @@ public class GameManager : Singleton<GameManager>
             }
             ClearAllMatchedSweet();
             StartCoroutine(IAllFill());
+            StepCount--;
         }
         else
         {
@@ -439,7 +443,6 @@ public class GameManager : Singleton<GameManager>
             return;
         }
         ExchangeSweets(pressedSweet, enteredSweet);
-        StepCount--;
 
     }
     /// <summary>
@@ -626,6 +629,10 @@ public class GameManager : Singleton<GameManager>
             }
         }
     }
+    public void ClearRangeSweet(int x,int y)
+    {
+        
+    }
     /// <summary>
     /// 匹配算法
     /// </summary>
@@ -726,13 +733,24 @@ public class GameManager : Singleton<GameManager>
         UIManager.GetView<UIGamePanel>().SetTimeAnimation(true);
         UIManager.Close<UIGameOverPanel>();
         UIManager.Close<UIGameVictoryPanel>();
-        if (sweets != null && sweets.Length > 0)
+        if ((sweets != null && sweets.Length > 0))
         {
             for (int x = 0; x < xColumn; x++)
             {
                 for (int y = 0; y < yRow; y++)
                 {
                     Destroy(sweets[x, y].gameObject);
+                }
+            }
+        }
+        //移除特殊情况
+        if (transform.childCount > 0)
+        {
+            foreach (Transform item in transform)
+            {
+                if (!item.CompareTag("Grid"))
+                {
+                    Destroy(item.gameObject);
                 }
             }
         }
@@ -778,8 +796,9 @@ public class GameManager : Singleton<GameManager>
     /// <summary>
     /// 游戏胜利
     /// </summary>
-    private void GameVictory()
+    private IEnumerator GameVictory()
     {
+        yield return new WaitForSeconds(2f);
         GameManager.Instance.isGameOver = true;
         UIManager.Show<UIGameVictoryPanel>();
         UIManager.GetView<UIGameVictoryPanel>().ResultScore(Score);
@@ -790,6 +809,7 @@ public class GameManager : Singleton<GameManager>
     {
         Level++;
         ResetGame(level);
+        UIManager.GetView<UISelectPanel>().SetChangeLevel(Level);
     }
     /// <summary>
     /// 是否显示甜品网格
