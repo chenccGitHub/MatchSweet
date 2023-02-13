@@ -33,7 +33,6 @@ public class GameManager : Singleton<GameManager>
     private float fillTime = 0.1f; //填充时间
     [Header("网格相关")]
     public GameObject girdPrefab; //网格预制体
-
     public bool isGameOver; //游戏结束
     private float gameTime = 60; //游戏时间
     private float scoreTime; //加分数的时间
@@ -238,7 +237,7 @@ public class GameManager : Singleton<GameManager>
         bool needFill = true; //是否需要继续填充
         while (needFill)
         {
-            yield return new WaitForSeconds(fillTime);
+            yield return new WaitForSeconds(fillTime + 0.19f);
             while (Fill()) //如果填充还没有完成的话就继续填充
             {
                 yield return new WaitForSeconds(fillTime);
